@@ -1,11 +1,22 @@
 describe('Тесты приложения', () => {
+  const testUrl = 'http://localhost:4000';
+  const ingredientSelector = 'li[data-cy="643d69a5c3f7b9001cfa0941"]';
+
   beforeEach(() => {
+    cy.setCookie('accessToken', 'test123key');
+    window.localStorage.setItem('refreshToken', 'test123refreshtoken');
+
     cy.intercept('GET', '/api/ingredients', {
       fixture: 'ingredients.json'
     }).as('getIngredients');
 
-    cy.visit('http://localhost:4000');
+    cy.visit(testUrl);
     cy.wait('@getIngredients');
+  });
+
+  afterEach(() => {
+    cy.clearCookie('accessToken');
+    window.localStorage.removeItem('refreshToken');
   });
 
   it('Добавление ингредиента из списка в конструктор', () => {
@@ -15,7 +26,7 @@ describe('Тесты приложения', () => {
 
     ingredientsContainer.contains('Выберите начинку');
 
-    cy.get('li[data-cy="643d69a5c3f7b9001cfa0941"]').within(() => {
+    cy.get(ingredientSelector).within(() => {
       cy.get('button').click();
     });
 
@@ -28,7 +39,7 @@ describe('Тесты приложения', () => {
     const modalContainer = cy.get('div[id="modals"]').as('modalContainer');
     // поиск элемента по data-cy _id ингредиента "Биокотлета из марсианской Магнолии"
     modalContainer.should('have.prop', 'childElementCount', 0);
-    cy.get('li[data-cy="643d69a5c3f7b9001cfa0941"]').within(() => {
+    cy.get(ingredientSelector).within(() => {
       cy.get('a').click();
     });
     modalContainer.contains('Детали ингредиента');
@@ -42,9 +53,6 @@ describe('Тесты приложения', () => {
   });
 
   it('Создание заказа', () => {
-    cy.setCookie('accessToken', 'test123key');
-    window.localStorage.setItem('refreshToken', 'test123refreshtoken');
-
     cy.intercept('GET', '/api/auth/user', {
       fixture: 'getUser.json'
     }).as('getUser');
@@ -62,13 +70,13 @@ describe('Тесты приложения', () => {
       'Выберите начинку'
     );
 
-    const modalContainer = cy.get('div[id="modals"]').as('modalContainer');
+    cy.get('div[id="modals"]').as('modalContainer');
 
     // сборка бургера
     cy.get('li[data-cy="643d69a5c3f7b9001cfa093c"]').within(() => {
       cy.get('button').click();
     });
-    cy.get('li[data-cy="643d69a5c3f7b9001cfa0941"]').within(() => {
+    cy.get(ingredientSelector).within(() => {
       cy.get('button').click();
     });
 
@@ -100,8 +108,5 @@ describe('Тесты приложения', () => {
     cy.get('section[data-cy="constructor-container"]').contains(
       'Выберите начинку'
     );
-
-    cy.clearCookie('accessToken');
-    window.localStorage.removeItem('refreshToken');
   });
 });

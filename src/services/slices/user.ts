@@ -18,7 +18,7 @@ type TUserState = {
   loginUserRequest: boolean;
 };
 
-const initialState: TUserState = {
+export const initialState: TUserState = {
   data: null,
   loginUserError: null,
   loginUserRequest: false
