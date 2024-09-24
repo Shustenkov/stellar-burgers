@@ -7,7 +7,7 @@ type TUserFeedState = {
   orders: TOrder[];
 };
 
-const initialState: TUserFeedState = {
+export const initialState: TUserFeedState = {
   orders: []
 };
 

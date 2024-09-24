@@ -8,7 +8,7 @@ type TOrderState = {
   orderModalData: TOrder | null;
 };
 
-const initialState: TOrderState = {
+export const initialState: TOrderState = {
   orderRequest: false,
   orderModalData: null
 };
